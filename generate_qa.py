@@ -20,16 +20,22 @@ r = redis.Redis(
 co = cohere.Client(COHERE_API_KEY)
 
 
-def parse_qa(text: str) -> (str, str):
+def parse_qa(gen_type: str, text: str) -> (str, str):
     """
     Parses a question and answer pair from LLM response into a question and answer.
     """
+    question_regex, solution_regex = "", ""
 
-
-    # Regex patterns for extracting question and solution
-    question_regex = r"Question:\s+(.*?)\n\nSolution:"
-    solution_regex = r"Solution:\s*(.*?)\s*\[END\]"
-
+    if gen_type == "qa":
+      # Regex patterns for extracting question and solution
+      question_regex = r"Question:\s+(.*?)\n\nSolution:"
+      solution_regex = r"Solution:\s*(.*?)\s*\[END\]"
+    
+    elif gen_type == "flashcard":
+      # Regex patterns for extracting question and solution
+      question_regex = r"Term:\s+(.*?)\n\nSolution:"
+      solution_regex = r"Definition:\s*(.*?)\s*\[END\]"
+      
     # Finding and extracting the question and solution using regex
     question_match = re.search(question_regex, text, re.DOTALL)
     solution_match = re.search(solution_regex, text, re.DOTALL)
@@ -37,11 +43,10 @@ def parse_qa(text: str) -> (str, str):
     question_text = question_match.group(1) if question_match else None
     solution_text = solution_match.group(1) if solution_match else None
     
-    
     return question_text, solution_text
 
 
-def generate_practice_qa(user: str, topic: str) -> [str]:
+def generate(gen_type: str, user: str, topic: str) -> [str]:
     """
     Generates a question and answer pair for a given user and topic.
     """
@@ -55,24 +60,8 @@ def generate_practice_qa(user: str, topic: str) -> [str]:
     qa_pairs = []
     for result in res.docs:
         context = json.loads(result.json)
-
-        prompt = f"""You are a professor who is an expert in the field of {topic}. Given the following context related to {topic}, come up with a question that you would ask your students to test their understanding of the topic. You can assume that your students have a basic understanding of the topic.
-        After providing the question, write out a step-by-step comprehensive solution in detail. It is critical that your solution is correct. Return your response in the provided format. Please denote the end of step-by-step solution by appending [END] to the end of your solution:
         
-
-        Example Response Format (DO NOT INCLUDE AS CONTEXT IN YOUR RESPONSE):
-
-        Question: Why is the sky blue?
-
-        Solution: The sky is blue because of Rayleigh scattering. [END]
-
-
-        Context: {context}
-        
-        
-        """
-        
-        print(prompt)
+        prompt = prompt.format(topic, topic, context)
         response = co.chat(
           prompt, 
           model="command", 
@@ -80,15 +69,15 @@ def generate_practice_qa(user: str, topic: str) -> [str]:
         )
 
         print("Response: ", response)
-        q, a = parse_qa(response.text)
+        q, a = parse_qa(gen_type, response.text)
 
         qa_pairs.append({"question": q, "answer": a})
 
     
     return qa_pairs
+  
 
-
-print(generate_practice_qa("joe", "example topic"))
+print(generate("joe", "example topic"))
 
 
 
