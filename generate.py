@@ -50,6 +50,22 @@ def generate(gen_type: str, user: str, topic: str) -> [str]:
     """
     Generates a question and answer pair for a given user and topic.
     """
+    prompt = ""
+    try:
+        with open('prompts.json', 'r') as file:
+            data = json.load(file)
+            cfgs = data["configs"]
+            for cfg in cfgs:
+                if cfg["type"] == gen_type:
+                    prompt = cfg["prompt"]
+                    break
+
+    except FileNotFoundError:
+        print("The file was not found")
+    
+    if not prompt:
+        print("error: empty prompt")
+        return []
 
     query_str = f'@topic:"{topic}" @user:"{user}"'
 
@@ -62,6 +78,7 @@ def generate(gen_type: str, user: str, topic: str) -> [str]:
         context = json.loads(result.json)
         
         prompt = prompt.format(topic, topic, context)
+        print("Prompt: ", prompt)
         response = co.chat(
           prompt, 
           model="command", 
@@ -77,7 +94,7 @@ def generate(gen_type: str, user: str, topic: str) -> [str]:
     return qa_pairs
   
 
-print(generate("joe", "example topic"))
+print(generate("flashcard", "joe", "example topic"))
 
 
 
