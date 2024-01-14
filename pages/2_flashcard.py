@@ -1,9 +1,10 @@
 import streamlit as st
+from crud.read import read_topic
 
 st.title("Flashcards")
 
 # Dropdown menu options
-dropdown_options = ["Option 1", "Option 2", "Option 3"]  # Replace these with your actual options
+dropdown_options = read_topic("joe")  # Replace these with your actual options
 
 # Add a dropdown menu under the title
 current_selection = st.selectbox("Choose an option:", dropdown_options, key='current_selection')
