@@ -1,13 +1,15 @@
 import streamlit as st
-from crud.read import read_topic
+from src.crud.read import read_topic
 
 st.title("Flashcards")
 
 # Dropdown menu options
-dropdown_options = read_topic("joe")  # Replace these with your actual options
+
+if 'dropdown_options' not in st.session_state:
+    st.session_state.dropdown_options = read_topic("joe")  # Replace these with your actual options
 
 # Add a dropdown menu under the title
-current_selection = st.selectbox("Choose an option:", dropdown_options, key='current_selection')
+current_selection = st.selectbox("Choose an option:", st.session_state.dropdown_options, key='current_selection')
 
 # Check if the selection has changed and update the session state variable
 if 'selected_option' not in st.session_state or st.session_state.selected_option != current_selection:
