@@ -29,12 +29,12 @@ def parse_qa(gen_type: str, text: str) -> (str, str):
     if gen_type == "qa":
       # Regex patterns for extracting question and solution
       question_regex = r"Question:\s+(.*?)\n\nSolution:"
-      solution_regex = r"Solution:\s*(.*?\s*\[END\])|Solution:\s*([^\n]*)"
+      solution_regex = r"Solution:\s*(.*?)(\s*\[END\]|\n)"
     
     elif gen_type == "flashcard":
       # Regex patterns for extracting question and solution
       question_regex = r"Term:\s+(.*?)\n\nDefinition:"
-      solution_regex = r"Definition:\s*([^\n]*)"
+      solution_regex = r"Definition:\s*(.*?)(\s*\[END\]|\n)"
       
     # Finding and extracting the question and solution using regex
     question_match = re.search(question_regex, text, re.DOTALL)
