@@ -1,6 +1,18 @@
 import streamlit as st
 
 st.title("Flashcards")
+
+# Dropdown menu options
+dropdown_options = ["Option 1", "Option 2", "Option 3"]  # Replace these with your actual options
+
+# Add a dropdown menu under the title
+current_selection = st.selectbox("Choose an option:", dropdown_options, key='current_selection')
+
+# Check if the selection has changed and update the session state variable
+if 'selected_option' not in st.session_state or st.session_state.selected_option != current_selection:
+    st.session_state.selected_option = current_selection
+
+    
 # Simulating a database of flashcards
 flashcards = [
     {"question": "Who is credited with inventing Champagne?", "answer": "Dom Perignon"},
