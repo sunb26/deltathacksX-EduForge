@@ -33,7 +33,7 @@ def parse_qa(gen_type: str, text: str) -> (str, str):
     
     elif gen_type == "flashcard":
       # Regex patterns for extracting question and solution
-      question_regex = r"Term:\s+(.*?)\n\nSolution:"
+      question_regex = r"Term:\s+(.*?)\n\nDefinition:"
       solution_regex = r"Definition:\s*(.*?)\s*\[END\]"
       
     # Finding and extracting the question and solution using regex
@@ -50,6 +50,10 @@ def generate(gen_type: str, user: str, topic: str) -> [str]:
     """
     Generates a question and answer pair for a given user and topic.
     """
+    system_prompt = ""
+    user_prompt = ""
+    wrong_assistant_prompt = ""
+    correct_assistant_prompt = ""
     prompt = ""
     try:
         with open('prompts.json', 'r') as file:
@@ -57,7 +61,11 @@ def generate(gen_type: str, user: str, topic: str) -> [str]:
             cfgs = data["configs"]
             for cfg in cfgs:
                 if cfg["type"] == gen_type:
-                    prompt = cfg["prompt"]
+                    system_prompt = cfg["system_prompt"]
+                    user_prompt = cfg["user_prompt"]
+                    wrong_assistant_prompt = cfg["wrong_assistant_prompt"]
+                    correct_assistant_prompt = cfg["correct_assistant_prompt"]
+                    prompt = cfg["new_prompt"]
                     break
 
     except FileNotFoundError:
@@ -67,6 +75,13 @@ def generate(gen_type: str, user: str, topic: str) -> [str]:
         print("error: empty prompt")
         return []
 
+    chat_history = [
+        {"user_name": "system", "text": system_prompt},
+        {"user_name": "user", "text": user_prompt},
+        {"user_name": "chatbot", "text": wrong_assistant_prompt},
+        {"user_name": "user", "text": "No that response is not formatted correctly. The end of the solution or definition must be marked with [END]. Please try again."},
+        {"user_name": "chatbot", "text": correct_assistant_prompt}
+    ]
     query_str = f'@topic:"{topic}" @user:"{user}"'
 
     index = r.ft("idx:notes")
@@ -75,14 +90,16 @@ def generate(gen_type: str, user: str, topic: str) -> [str]:
 
     qa_pairs = []
     for result in res.docs:
-        context = json.loads(result.json)
+        context = json.loads(result.json)["text"]
         
-        prompt = prompt.format(topic, topic, context)
+        prompt = prompt.format(topic, context)
         print("Prompt: ", prompt)
+        print("Chat History: ", chat_history)
         response = co.chat(
           prompt, 
+          chat_history=chat_history,
           model="command", 
-          temperature=0.0
+          temperature=0.1
         )
 
         print("Response: ", response)
@@ -94,7 +111,7 @@ def generate(gen_type: str, user: str, topic: str) -> [str]:
     return qa_pairs
   
 
-print(generate("flashcard", "joe", "example topic"))
+print(generate("flashcard", "joe", "Anatomy"))
 
 
 
