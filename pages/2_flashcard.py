@@ -1,4 +1,3 @@
-
 import streamlit as st
 
 st.title("Flashcards")
@@ -31,16 +30,22 @@ def show_flashcard():
             unsafe_allow_html=True
         )
         
-        # Create a placeholder for the answer
+        # Create a placeholder for the answer above the button
         answer_placeholder = st.empty()
-        
-        # Use a button to toggle the answer
-        if st.button("Click to reveal the answer", key="question_button"):
+
+        # Use a button to toggle the answer, changing the text based on whether the answer is shown
+        button_label = "Click to reveal the answer" if not st.session_state.show_answer else "Click to hide answer"
+        if st.button(button_label, key="question_button"):
+            # Toggle the show_answer state
             st.session_state.show_answer = not st.session_state.show_answer
-        
-        # If the answer is to be shown, display it in the placeholder above the button
+            # Rerun the script to update the button label immediately
+            st.rerun()
+
+        # If the answer is to be shown, display it in the placeholder
         if st.session_state.show_answer:
             answer_placeholder.markdown(f"**Answer:** {card['answer']}")
+        else:
+            answer_placeholder.empty()
 
 # Function to navigate to the previous flashcard
 def prev_card():
@@ -56,9 +61,9 @@ def next_card():
 # Display the flashcard
 show_flashcard()
 
-# Navigation buttons
-col1, col2, col3 = st.columns([8, 10, 8])
-with col1:
+# Navigation buttons, adjust columns to align 'Next' with the right edge of the flashcard box
+button_cols = st.columns([1, 5, 1])
+with button_cols[0]:
     st.button("Previous", on_click=prev_card)
-with col3:
+with button_cols[2]:
     st.button("Next", on_click=next_card)
