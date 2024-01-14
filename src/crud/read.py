@@ -3,6 +3,7 @@ from psycopg2 import Error
 import re
 from dotenv import load_dotenv
 import os
+from typing import List, Tuple
 
 load_dotenv()
 
@@ -39,15 +40,15 @@ def read_topic(username: str) -> [str]:
 
     return topics
 
-def read_qa(user: str) -> [dict]:
+def read_qa(username: str, topic: str) -> List[Tuple[str, str]]:
     conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, sslmode=sslmode)
     cur = conn.cursor()
     try:
-        cur.execute("SELECT topics FROM topics WHERE username = %s", (user,))
+        cur.execute("SELECT question, answer FROM qa WHERE username = %s AND topic = %s", (username, topic))
         rows = cur.fetchall()
-        topics = [row[0] for row in rows] 
+        qa_pairs = [(row[0], row[1]) for row in rows]  
 
-    except Error as e:
+    except psycopg2.Error as e:  
         print(f"An error occurred: {e}")
         conn.rollback()
         return []
@@ -56,32 +57,26 @@ def read_qa(user: str) -> [dict]:
         cur.close()
         conn.close()
 
-    return topics
+    return qa_pairs
 
-    conn.commit()
-    cur.close()
-    conn.close()
-    return None
-
-def read_flashcard(user:str, topic:str, flashcard_list: list) -> Error:
+def read_flashcard(username:str, topic:str) -> List[Tuple[str, str]]:
     conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, sslmode=sslmode)
     cur = conn.cursor()
+    try:
+        cur.execute("SELECT term, def FROM flashcards WHERE username = %s AND topic = %s", (username, topic))
+        rows = cur.fetchall()
+        td_pairs = [(row[0], row[1]) for row in rows] 
 
-    for flashcard in flashcard_list:
-        term = flashcard["term"]
-        definition = flashcard["definition"]
-        try:
-            cur.execute("INSERT INTO flashcard (username, topic, term, definition) VALUES (%s, %s, %s, %s)", (user, topic, term, definition))
-        except Error as e:
-            print(f"An error occurred: {e}")
-            conn.rollback()
-            return Error
+    except psycopg2.Error as e: 
+        print(f"An error occurred: {e}")
+        conn.rollback()
+        return []
 
-    conn.commit()
-    cur.close()
-    conn.close()
-    return None
+    finally:
+        cur.close()
+        conn.close()
 
+    return td_pairs
 
 
 
