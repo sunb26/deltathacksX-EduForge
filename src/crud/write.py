@@ -38,10 +38,12 @@ def new_topic(user:str, topic:str) -> bool:
 def new_qa(username:str, topic:str, qa_list: list) -> bool:
     conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, sslmode=sslmode)
     cur = conn.cursor()
+    print("established connection")
 
     for qa in qa_list:
         q = qa["question"]
         a = qa["answer"]
+        print(qa)
         try:
             cur.execute("INSERT INTO qa (username, topic, question, answer) VALUES (%s, %s, %s, %s)", (username, topic, q, a))
         except Error as e:
@@ -49,6 +51,7 @@ def new_qa(username:str, topic:str, qa_list: list) -> bool:
             conn.rollback()
             return Error
 
+    print("done")
     conn.commit()
     cur.close()
     conn.close()
