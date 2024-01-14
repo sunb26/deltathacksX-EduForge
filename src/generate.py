@@ -106,7 +106,8 @@ def generate(gen_type: str, user: str, topic: str) -> [str]:
             input_prompt, 
             chat_history=temp_chat_history,
             model="command", 
-            temperature=0.0
+            temperature=0.0,
+            prompt_truncation='AUTO'
           )
 
           print("Response: ", response.text)

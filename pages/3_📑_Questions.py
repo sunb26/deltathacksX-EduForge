@@ -37,7 +37,7 @@ if selected_option:
 
     content_string = ""
     for pair in res:
-        content_string += f"Q: {pair[0]}\n\n\n\n\n\nA: {pair[1]}\n\n"
+        content_string += f"Q: {pair[0]}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nA: {pair[1]}\n\n"
 
     pdfCreate(content_string, selected_option.lower())
 

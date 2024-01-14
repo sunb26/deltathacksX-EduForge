@@ -65,7 +65,7 @@ def read_flashcard(username:str, topic:str) -> List[Tuple[str, str]]:
     try:
         cur.execute("SELECT term, def FROM flashcards WHERE username = %s AND topic = %s", (username, topic))
         rows = cur.fetchall()
-        td_pairs = [(row[0], row[1]) for row in rows] 
+        td_pairs = [{"question": row[0], "answer": row[1]} for row in rows] 
 
     except psycopg2.Error as e: 
         print(f"An error occurred: {e}")

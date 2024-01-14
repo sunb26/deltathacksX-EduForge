@@ -3,16 +3,16 @@
         "type": "qa", 
         "system_prompt": "You are an AI expert who excels at teaching and helping students understand difficult concepts. Given the following context, come up with a question that you would ask your students to test their understanding of the topic. You can assume that your students have a basic understanding of the topic.\nAfter providing the question, write out a step-by-step comprehensive solution in detail. It is critical that your solution is correct. Return your response in the provided format. Please denote the end of step-by-step solution by appending **[END]** to the end of your solution. Ensure you do not provide duplicate questions. Return None if no further questions can be made. YOUR SOLUTION MUST CONTAIN [END] WHEN FINISHED OR THIS IS A CRITICAL ERROR!",
         "user_prompt": "\n\nTopic: Science\nContext: The sky is blue because of Rayleigh scattering.\n\n",
-        "wrong_assistant_prompt": "Question: Why is the sky blue?\n\nSolution: The sky is blue because of Rayleigh scattering. \n Would you like to know more about Rayleigh scattering?",
-        "correct_assistant_prompt": "Question: Why is the sky blue?\n\nSolution: The sky is blue because of Rayleigh scattering. \n [END] \n Would you like to know more about Rayleigh scattering?",
+        "wrong_assistant_prompt": "Question: Why is the sky blue?\n\nSolution: The sky is blue because of Rayleigh scattering. \n",
+        "correct_assistant_prompt": "Question: Why is the sky blue?\n\nSolution: The sky is blue because of Rayleigh scattering. \n [END] \n ",
         "new_prompt": "\nTopic: {}\nContext: {}\n"
     },
     {
         "type": "flashcard", 
         "system_prompt": "You are an AI who excels at teaching and helping students understand difficult concepts. Given the following context, find important terms and definitions that you would ask your students to test their understanding of the topic. You can assume that your students have a basic understanding of the topic.\nProvide a key term and its definition. Return your response in the provided format. Please denote the end of definition by appending [END] to the end of your solution. Ensure you do not provide duplicate questions. Return None if no further questions can be made. YOUR SOLUTION MUST CONTAIN [END] WHEN FINISHED OR THIS IS A CRITICAL ERROR!",
         "user_prompt": "\n\nTopic: Anatomy\nContext: The skull is a framework of bone or cartilage enclosing the brain of a vertebrate; the skeleton of a person's or animal's head. \n\n",
-        "wrong_assistant_prompt": "\nTerm: Skull\n\nDefinition: A framework of bone or cartilage enclosing the brain of a vertebrate; the skeleton of a person's or animal's head.\n Would you like to know more about the skull?",
-        "correct_assistant_prompt": "\nTerm: Skull\n\nDefinition: A framework of bone or cartilage enclosing the brain of a vertebrate; the skeleton of a person's or animal's head.\n [END] \n Would you like to know more about the skull?",
+        "wrong_assistant_prompt": "\nTerm: Skull\n\nDefinition: A framework of bone or cartilage enclosing the brain of a vertebrate; the skeleton of a person's or animal's head.\n",
+        "correct_assistant_prompt": "\nTerm: Skull\n\nDefinition: A framework of bone or cartilage enclosing the brain of a vertebrate; the skeleton of a person's or animal's head.\n [END] \n",
         "new_prompt": "\nTopic: {}\nContext: {}"
     }
 ]}

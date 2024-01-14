@@ -39,21 +39,14 @@ with col1:
 
 with col2:
     st_lottie(url_json, width=width, height=height)
-    
-
-video_html = """<video controls width="250" autoplay="true" muted="true" loop="true">
-        <source  src = "./assets/pexels-google-deepmind-18069235 (Original).mp4" type="video/mp4" > 
-</video>"""
-
-st.markdown(video_html, unsafe_allow_html=True)
 
 # Initial selections for the select box
 if 'options' not in st.session_state:
-    st.session_state.options = ['Anatomy', 'History', 'Geography']
+    st.session_state.options = read_topic("joe")
 
 # Display the select box
 selected_option = st.sidebar.selectbox(
-    'Choose a Topic',
+    'Choose a topic',
     st.session_state.options
 )
 
@@ -73,6 +66,7 @@ if submit_button and newTopic:
         selected_option = newTopic
         st.sidebar.write("New topic:", newTopic)
         st.sidebar.write("Topic list:", st.session_state.options)
+        new_topic("joe", newTopic)
         st.rerun()
 
 
@@ -85,7 +79,6 @@ st.markdown(
     
     #### Join us in shaping the future of education, where every challenge is an opportunity to learn and grow."""
     )
-
 uploaded = st.sidebar.file_uploader("Choose a file", type="pdf", accept_multiple_files=False)
 
 if uploaded:
@@ -107,7 +100,7 @@ if uploaded:
     res = generate("qa", "joe", selected_option)
 
     print("logging new qas")
-    new_qa("joe", "Anatomy", res)
+    new_qa("joe", selected_option, res)
     
 
     st.write(res)

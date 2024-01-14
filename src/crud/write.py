@@ -20,11 +20,11 @@ else:
     raise ValueError("Invalid database connection string format")
 
 
-def new_topic(user:str, topic:str) -> bool:
+def new_topic(username:str, topic:str) -> bool:
     conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, sslmode=sslmode)
     cur = conn.cursor()
     try:
-        cur.execute("INSERT INTO topics (username, topic) VALUES (%s, %s)", (user, topic))
+        cur.execute("INSERT INTO topics (username, topic) VALUES (%s, %s)", (username, topic))
     except Error as e:
         print(f"An error occurred: {e}")
         conn.rollback()
